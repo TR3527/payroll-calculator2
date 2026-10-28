@@ -1,5 +1,6 @@
 package com.pluralsight;
 import java.io.*;
+import java.util.Scanner;
 
 //import java.io.BufferedWriter;
 //import java.io.FileWriter;
@@ -8,11 +9,28 @@ import java.io.*;
 
 public class PayrollCalculator {
     public static void main(String[] args) throws FileNotFoundException {
+        Scanner read = new Scanner(System.in);
+
+        System.out.print("Enter the name of the file employee file to process: ");
+        String employeeFile = read.nextLine();
+
+
+        System.out.print("Enter the name of the payroll file to create: ");
+        String payrollFile = read.nextLine();
+
+
 
 
         try {
-            FileReader file = new FileReader("employees.csv");
+            FileReader file = new FileReader(employeeFile);
             BufferedReader reader = new BufferedReader(file);
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(payrollFile));
+            writer.write("id|name|gross pay");
+            writer.newLine();
+
+
+
 
             String input;
 
@@ -26,6 +44,11 @@ public class PayrollCalculator {
                double newPayRate = Double.parseDouble(employeeInformation[3]);
 
                Employee chosenEmployee = new Employee(intEmployeeId,employeeName,newHoursWorked, newPayRate);
+                String grossPayNewFormat = String.format("%.2f",chosenEmployee.getGrossPay());
+
+                writer.write(chosenEmployee.getEmployeeId() + "|" + chosenEmployee.getName() + "|" +
+                        grossPayNewFormat);
+                writer.newLine();
 
 
 //                System.out.println("Name: " + chosenEmployee.getName());
@@ -38,19 +61,20 @@ public class PayrollCalculator {
                 //double grossPay = chosenEmployee.getGrossPay();
 
 
-
                 System.out.printf(" Name: %s%n ID: %d%n Gross Pay: %.2f%n \n",chosenEmployee.getName(),
                         chosenEmployee.getEmployeeId(),chosenEmployee.getGrossPay());
 
 
             }
-            reader.close();
+            writer.close();
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        read.close();
 
 
     }
